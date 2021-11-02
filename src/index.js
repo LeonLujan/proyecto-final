@@ -1,11 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+const express = require('express');
+const morgan = require('morgan');
+const path = require('path');
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const app = express();
+
+// Db connection
+const { mongoose } = require('./database');
+
+// Settings 
+app.set('port', process.env.PORT || 5000);
+
+// Middlewares
+app.use(morgan('dev'));
+app.use(express.json());
+
+// Routes
+app.use('/api/notes', require('./routes/note.routes'));
+
+// Static Files
+app.use(express.static(path.join(__dirname, 'public')));;
+
+// Starting the server
+app.listen(app.get('port'), () => {
+  console.log(`Server on port ${app.get('port')}`);
+});
